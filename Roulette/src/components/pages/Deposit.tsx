@@ -50,9 +50,6 @@ const Deposit: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase text-accent/80 tracking-widest">Encypted</span>
-                    </div>
                 </div>
             </div>
 
@@ -133,9 +130,10 @@ const Deposit: React.FC = () => {
                                         <button
                                             type="submit"
                                             disabled={!amount || parseInt(amount, 10) <= 0}
-                                            className="w-full h-16 bg-accent text-black rounded-2xl flex items-center justify-center gap-4 font-black uppercase tracking-widest disabled:opacity-20 transition-all shadow-[0_4px_30px_rgba(29,185,84,0.3)] hover:scale-[1.02] active:scale-95"
+                                            className="group relative w-full h-18 bg-accent text-black rounded-2xl flex items-center justify-center overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20 disabled:grayscale mt-4"
                                         >
-                                            Confirm Transfer
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
+                                            <span className="relative z-10 font-black uppercase tracking-[0.2em] text-sm italic">Confirm Transfer</span>
                                         </button>
                                     </form>
                                 </div>
@@ -172,18 +170,8 @@ const Deposit: React.FC = () => {
                             </div>
                         </div>
                     </div>
-
-                    <div className="bg-accent/5 border border-accent/20 rounded-[24px] p-6 flex flex-col gap-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black uppercase text-accent tracking-[0.2em]">New Bonus</span>
-                        </div>
-                        <p className="text-xs font-bold text-white/60 leading-relaxed">
-                            Deposit more than <span className="text-accent">$10,000</span> today and receive a <span className="text-accent">+20%</span> credit bonus instantly.
-                        </p>
-                    </div>
                 </div>
             </div>
-        </div>
     );
 };
 

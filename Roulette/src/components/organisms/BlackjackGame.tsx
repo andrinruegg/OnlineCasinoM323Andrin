@@ -164,14 +164,9 @@ const BlackjackGame: React.FC = () => {
                     </button>
                     <div>
                         <h2 className="text-xl font-black tracking-tight">Blackjack</h2>
-                        <p className="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mt-1">Dealer Hits Soft 17 · 3:2 Blackjack</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 flex items-center gap-2">
-                        <Info size={12} weight="fill" className="text-accent" />
-                        <span className="text-[10px] font-black uppercase text-accent/80 tracking-widest">Fair Play</span>
-                    </div>
                 </div>
             </div>
 

@@ -92,14 +92,9 @@ const SlotsGame: React.FC = () => {
                     </button>
                     <div>
                         <h2 className="text-xl font-black tracking-tight">Slots</h2>
-                        <p className="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mt-1">Classic 3-Reel · Lucky Diamond</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center gap-2">
-                        <Lightning size={12} weight="fill" className="text-yellow-500" />
-                        <span className="text-[10px] font-black uppercase text-yellow-500/80 tracking-widest">Jackpot Active</span>
-                    </div>
                 </div>
             </div>
 
@@ -211,11 +206,6 @@ const SlotsGame: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-6">
-                    <div className="hidden lg:block text-right">
-                        <div className="text-[10px] font-black uppercase text-white/40 tracking-[0.1em] mb-1">RTP 96.5%</div>
-                        <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest font-mono">SECURE PLAY</div>
-                    </div>
-                    
                     <button
                         onClick={spin}
                         disabled={isSpinning || balance < bet}

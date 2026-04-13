@@ -75,8 +75,7 @@ const RouletteGame: React.FC = () => {
                         <ArrowLeft size={18} weight="bold" />
                     </button>
                     <div>
-                        <h2 className="text-xl font-black tracking-tight">Roulette</h2>
-                        <p className="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mt-1">European · Single Zero</p>
+                        <h2 className="text-xl font-black tracking-tight">Casino Ramon</h2>
                     </div>
                 </div>
 
