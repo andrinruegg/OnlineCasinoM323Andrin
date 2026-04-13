@@ -2,7 +2,7 @@
 
 Willkommen bei **Casino Ramon**. Das hier ist mein Abschlussprojekt für das Modul M323. Ich habe versucht, eine Online-Casino-Plattform zu bauen, die sich strikt an die Prinzipien der funktionalen Programmierung (FP) hält. Mir war wichtig, dass der Code nicht nur funktioniert, sondern auch sauber strukturiert und für andere leicht verständlich ist.
 
-Ich habe das Ganze von Grund auf mit **TypeScript**, **React** und **TailwindCSS** hochgezogen. Dabei habe ich vor allem auf eine "Functional Core, Imperative Shell" Architektur geachtet.
+Ich habe das Ganze von Grund auf mit **TypeScript**, **React** und **TailwindCSS** hochgezogen. Dabei habe ich vor allem auf eine "Functional Core, Imperative Shell" Architektur geachtet. Ebenfalls ist mein Code im Atomic Design geschrieben.
 
 ---
 
