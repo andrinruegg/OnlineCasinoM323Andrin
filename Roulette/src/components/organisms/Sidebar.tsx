@@ -67,11 +67,7 @@ const Sidebar: React.FC = () => {
                 </div>
             </nav>
 
-            <div className="p-5 mt-auto border-t border-white/5">
-                <p className="text-[11px] text-white/20 leading-relaxed">
-                    Casino Ramon is a student project built for M323.
-                </p>
-            </div>
+
         </aside>
     );
 };
