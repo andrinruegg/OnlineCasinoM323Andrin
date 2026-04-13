@@ -6,14 +6,8 @@ import { useBalance } from '../../context/BalanceContext';
 import confetti from 'canvas-confetti';
 import { cn } from '../../lib/utils';
 
-// ---- Symbols ----
-interface SlotSymbol {
-    id: string;
-    display: string;
-    value: number;
-    label: string;
-    color: string;
-}
+import { SlotSymbol } from '../../types/slots';
+import { evaluateSpin, generateResults } from '../../lib/slotsUtils';
 
 const SYMBOLS: SlotSymbol[] = [
     { id: 'seven',   display: '7',  value: 200, label: 'Jackpot',  color: '#ef4444' },
@@ -52,9 +46,7 @@ const SlotsGame: React.FC = () => {
         setWinAmount(0);
         setWinningLine(null);
 
-        const newResults: SlotSymbol[][] = Array.from({ length: REEL_COUNT }, () =>
-            Array.from({ length: 3 }, () => SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)])
-        );
+        const newResults = generateResults(SYMBOLS, REEL_COUNT);
 
         await Array.from({ length: REEL_COUNT }).reduce(async (promise, _, i) => {
             await promise;
@@ -68,35 +60,20 @@ const SlotsGame: React.FC = () => {
     };
 
     const checkWin = (results: SlotSymbol[][]) => {
-        const { totalWin, wonLine } = Array.from({ length: 3 }).reduce(
-            (acc, _, row) => {
-                const line = [results[0][row], results[1][row], results[2][row]];
-                if (line.every(s => s.id === line[0].id)) {
-                    return {
-                        totalWin: acc.totalWin + line[0].value * (bet / 10),
-                        wonLine: row
-                    };
-                }
-                return acc;
-            },
-            { totalWin: 0, wonLine: null as number | null }
-        );
+        const outcome = evaluateSpin(results, bet);
 
-        if (totalWin > 0) {
-            deposit(totalWin); setWinAmount(totalWin); setWinningLine(wonLine);
-            setMessage(`Winner! +$${totalWin.toLocaleString()}`);
+        if (outcome.totalWin > 0) {
+            deposit(outcome.totalWin);
+            setWinAmount(outcome.totalWin);
+            setWinningLine(outcome.wonLine);
+            setMessage(`Winner! +$${outcome.totalWin.toLocaleString()}`);
             confetti({ particleCount: 220, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#ffffff', '#ef4444'] });
+        } else if (outcome.isNearMiss) {
+            deposit(outcome.payout);
+            setWinAmount(outcome.payout);
+            setMessage(`Near miss! +$${outcome.payout}`);
         } else {
-            const midRow = [results[0][1], results[1][1], results[2][1]];
-            const counts: Record<string, number> = {};
-            midRow.forEach(s => counts[s.id] = (counts[s.id] || 0) + 1);
-            if (Object.values(counts).some(c => c === 2)) {
-                const payout = Math.floor(bet * 0.5);
-                deposit(payout); setWinAmount(payout);
-                setMessage(`Near miss! +$${payout}`);
-            } else {
-                setMessage('Better luck next time');
-            }
+            setMessage('Better luck next time');
         }
     };
 
