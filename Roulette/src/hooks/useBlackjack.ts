@@ -55,34 +55,20 @@ export const useBlackjack = (
         const pVal = calculateHandValue([...activePlayerHand]);
         const dVal = calculateHandValue([...finalDealerHand]);
         
-        let winStatus: boolean | null = null;
-        let msg = '';
-        let winAmount = 0;
+        const outcome = playerHasBlackjack
+            ? (dVal === 21 
+                ? { winAmount: betAmount, msg: 'Push · Both Blackjack', winStatus: null as boolean | null }
+                : { winAmount: betAmount * 2.5, msg: 'Blackjack! ✦ 3:2 Payout', winStatus: true as boolean | null })
+            : (dVal > 21
+                ? { winAmount: betAmount * 2, msg: 'Dealer Bust · You Win!', winStatus: true as boolean | null }
+                : (pVal > dVal
+                    ? { winAmount: betAmount * 2, msg: 'You Win!', winStatus: true as boolean | null }
+                    : (pVal < dVal
+                        ? { winAmount: 0, msg: 'Dealer Wins', winStatus: false as boolean | null }
+                        : { winAmount: betAmount, msg: 'Push · Bet Returned', winStatus: null as boolean | null })));
 
-        if (playerHasBlackjack) {
-            if (dVal === 21) {
-                winAmount = betAmount;
-                msg = 'Push · Both Blackjack';
-            } else {
-                winAmount = betAmount * 2.5;
-                msg = 'Blackjack! ✦ 3:2 Payout';
-                winStatus = true;
-            }
-        } else if (dVal > 21) {
-            winAmount = betAmount * 2;
-            msg = 'Dealer Bust · You Win!';
-            winStatus = true;
-        } else if (pVal > dVal) {
-            winAmount = betAmount * 2;
-            msg = 'You Win!';
-            winStatus = true;
-        } else if (pVal < dVal) {
-            msg = 'Dealer Wins';
-            winStatus = false;
-        } else {
-            winAmount = betAmount;
-            msg = 'Push · Bet Returned';
-        }
+        const { winStatus, msg, winAmount } = outcome;
+
 
         if (winAmount > 0) deposit(winAmount);
 
