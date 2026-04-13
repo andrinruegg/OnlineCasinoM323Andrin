@@ -1,12 +1,12 @@
-# Online Casino M323 – Functional Programming Project
+# Online Casino M323 - Functional Programming Project
 
-This is our evaluation project for module M323 at our school. The task was to build something using functional programming concepts in TypeScript, so we went with an online casino since it's an interesting problem space where things like payout calculations and statistics actually benefit from pure functions.
+This is my evaluation project for module M323 at my school. The task was to build something using functional programming concepts in TypeScript, so I went with an online casino since it's an interesting problem space where things like payout calculations and statistics actually benefit from pure functions.
 
-We built a full casino platform with Roulette, Blackjack, and Slots. The core logic lives in a handful of small utility files and is entirely side-effect free.
+I built a full casino platform with Roulette, Blackjack, and Slots. The core logic lives in a handful of small utility files and is entirely side-effect free.
 
-## What we built
+## What I built
 
-The project is a browser-based casino with three games. All the actual game logic (who wins, how much, what the odds are) is written as pure functions in `src/lib/`. The React components just call those functions and display results — they don't do math themselves.
+The project is a browser-based casino with three games. All the actual game logic (who wins, how much, what the odds are) is written as pure functions in `src/lib/`. The React components just call those functions and display results. They don't do math themselves.
 
 ## How functional programming fits in
 
@@ -16,15 +16,15 @@ Everything in `src/lib/rouletteUtils.ts` and `src/lib/fpUtils.ts` is a plain inp
 
 **Immutability**
 
-We don't use `let` or reassign variables anywhere in the logic files. State changes go through our `update()` helper in `fpUtils.ts` which does a shallow copy instead of modifying anything in place. The hook `useRoulette.ts` follows the same pattern.
+I don't use `let` or reassign variables anywhere in the logic files. State changes go through my `update()` helper in `fpUtils.ts` which does a shallow copy instead of modifying anything in place. The hook `useRoulette.ts` follows the same pattern.
 
 **Higher-order functions and closures**
 
-The most interesting part is `createEvaluator` in `rouletteUtils.ts`. Instead of a big switch statement for each bet type, we have a function that takes a win condition and a multiplier and returns a new evaluator function. The `payoutRules` dictionary is built entirely from these closures. It's cleaner and easier to extend.
+The most interesting part is `createEvaluator` in `rouletteUtils.ts`. Instead of a big switch statement for each bet type, I have a function that takes a win condition and a multiplier and returns a new evaluator function. The `payoutRules` dictionary is built entirely from these closures. It's cleaner and easier to extend.
 
 **Function composition**
 
-We wrote a generic `pipe()` function in `fpUtils.ts` that chains functions left to right. We use it in `deriveStats()` to turn a raw array of spin results into the hot/cold number statistics shown on the game screen.
+I wrote a generic `pipe()` function in `fpUtils.ts` that chains functions left to right. I use it in `deriveStats()` to turn a raw array of spin results into the hot/cold number statistics shown on the game screen.
 
 **Type safety**
 
@@ -35,14 +35,14 @@ We wrote a generic `pipe()` function in `fpUtils.ts` that chains functions left 
 ```
 src/
   lib/
-    fpUtils.ts         – pipe() and update() — generic FP tools
-    rouletteUtils.ts   – all roulette logic as pure functions
-    blackjackUtils.ts  – deck creation and hand value calculation
+    fpUtils.ts         - pipe() and update(), generic FP tools
+    rouletteUtils.ts   - all roulette logic as pure functions
+    blackjackUtils.ts  - deck creation and hand value calculation
   hooks/
-    useRoulette.ts     – state management, isolates side effects
+    useRoulette.ts     - state management, isolates side effects
   types/
-    roulette.ts        – type definitions and constants
-  components/          – React UI
+    roulette.ts        - type definitions and constants
+  components/          - React UI
 ```
 
 The key design decision was keeping `rouletteUtils.ts` completely unaware of React. It doesn't import anything from React. If you want to test the payout logic you can just call `calculateTotalPayout(12, [{ type: 'straight', value: 12, amount: 100 }])` and get `3600` back. No test setup needed.
@@ -62,4 +62,4 @@ npm run build
 
 ## Testing the logic manually
 
-Since all complex logic is in pure functions, you can verify it without running the app at all. Open `src/lib/rouletteUtils.ts` and look at `calculateTotalPayout` — pass it any result number and an array of bets and it will return the correct payout every time, deterministically. Same with `deriveStats`: give it an array of numbers and it returns `{ hot: [...], cold: [...] }` based on frequency.
+Since all complex logic is in pure functions, you can verify it without running the app at all. Open `src/lib/rouletteUtils.ts` and look at `calculateTotalPayout` - pass it any result number and an array of bets and it will return the correct payout every time, deterministically. Same with `deriveStats`: give it an array of numbers and it returns `{ hot: [...], cold: [...] }` based on frequency.
