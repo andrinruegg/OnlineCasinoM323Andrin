@@ -15,7 +15,6 @@ export const Chip: React.FC<ChipProps> = ({ amount }) => (
             <div className="w-7 h-7 rounded-full border border-accent/10 flex items-center justify-center font-black text-[9px] text-accent tracking-tighter">
                 {amount >= 1000 ? `${(amount / 1000).toFixed(1)}k` : amount}
             </div>
-            {/* Chip Serrations */}
             <div className="absolute inset-0 rounded-full border-2 border-dashed border-accent/10" />
         </div>
     </motion.div>

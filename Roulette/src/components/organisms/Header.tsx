@@ -11,9 +11,7 @@ const Header: React.FC = () => {
         <header className="h-14 border-b border-white/5 px-6 flex items-center justify-between bg-[#0d0f12] sticky top-0 z-30">
             <div className="flex-1" />
 
-            {/* Right Side */}
             <div className="flex items-center gap-6">
-                {/* Balance */}
                 <div className="flex items-center gap-3">
                     <div className="balance-chip flex items-center gap-3 bg-[#1b1e23] border-white/5">
                         <span className="text-sm font-medium">${balance.toLocaleString()}</span>

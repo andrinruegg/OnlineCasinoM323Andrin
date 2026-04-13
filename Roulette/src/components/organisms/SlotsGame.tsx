@@ -7,7 +7,7 @@ import confetti from 'canvas-confetti';
 import { cn } from '../../lib/utils';
 
 import { SlotSymbol } from '../../types/slots';
-import { evaluateSpin, generateResults } from '../../lib/slotsUtils';
+import { useSlots } from '../../hooks/useSlots';
 
 const SYMBOLS: SlotSymbol[] = [
     { id: 'seven',   display: '7',  value: 200, label: 'Jackpot',  color: '#ef4444' },
@@ -23,65 +23,22 @@ const REEL_COUNT = 3;
 const SlotsGame: React.FC = () => {
     const navigate = useNavigate();
     const { balance, withdraw, deposit } = useBalance();
+    const { state, setBet, spin } = useSlots(balance, withdraw, deposit, SYMBOLS);
 
-    const [reels, setReels] = useState<SlotSymbol[][]>(
-        Array(REEL_COUNT).fill(null).map(() => [SYMBOLS[0], SYMBOLS[1], SYMBOLS[2]])
-    );
-    const [spinningReels, setSpinningReels] = useState<boolean[]>([false, false, false]);
-    const [isSpinning, setIsSpinning] = useState(false);
-    const [bet, setBet] = useState(100);
-    const [message, setMessage] = useState('Good luck!');
-    const [winAmount, setWinAmount] = useState(0);
-    const [winningLine, setWinningLine] = useState<number | null>(null);
+    const { reels, spinningReels, isSpinning, bet, message, winAmount, winningLine } = state;
 
-    const spin = async () => {
-        if (balance < bet) { 
-            setMessage('Insufficient balance!'); 
-            return; 
-        }
-        setIsSpinning(true);
-        setSpinningReels([true, true, true]);
-        withdraw(bet);
-        setMessage('Spinning…');
-        setWinAmount(0);
-        setWinningLine(null);
-
-        const newResults = generateResults(SYMBOLS, REEL_COUNT);
-
-        await Array.from({ length: REEL_COUNT }).reduce(async (promise, _, i) => {
-            await promise;
-            await new Promise(res => setTimeout(res, 1500 + i * 400));
-            setSpinningReels(prev => Object.assign([...prev], { [i]: false }));
-            setReels(prev => Object.assign([...prev], { [i]: newResults[i] }));
-        }, Promise.resolve());
-
-        setIsSpinning(false);
-        checkWin(newResults);
-    };
-
-    const checkWin = (results: SlotSymbol[][]) => {
-        const outcome = evaluateSpin(results, bet);
-
-        if (outcome.totalWin > 0) {
-            deposit(outcome.totalWin);
-            setWinAmount(outcome.totalWin);
-            setWinningLine(outcome.wonLine);
-            setMessage(`Winner! +$${outcome.totalWin.toLocaleString()}`);
+    const handleSpin = async () => {
+        const result = await spin();
+        if (result && result.win) {
             confetti({ particleCount: 220, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#ffffff', '#ef4444'] });
-        } else if (outcome.isNearMiss) {
-            deposit(outcome.payout);
-            setWinAmount(outcome.payout);
-            setMessage(`Near miss! +$${outcome.payout}`);
-        } else {
-            setMessage('Better luck next time');
         }
     };
+
 
     const BET_OPTIONS = [50, 100, 200, 500];
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Header info */}
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-4">
                     <button 
@@ -98,20 +55,16 @@ const SlotsGame: React.FC = () => {
                 </div>
             </div>
 
-            {/* Machine Area */}
             <div className="relative w-full aspect-[16/9] max-h-[600px] bg-gradient-to-br from-gray-800 to-gray-900 rounded-[40px] border-8 border-gray-700 overflow-hidden shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] flex flex-col p-1">
-                {/* Machine top light */}
                 <div className={cn(
                     "h-2 w-full transition-all duration-300",
                     isSpinning ? "bg-yellow-400 shadow-[0_0_20px_#fbbf24]" : "bg-gray-600"
                 )} />
 
                 <div className="flex-1 flex flex-col items-center justify-center p-12 relative">
-                    {/* Reel Shadows */}
                     <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/40 to-transparent z-20 pointer-events-none" />
                     <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/40 to-transparent z-20 pointer-events-none" />
 
-                    {/* Reels */}
                     <div className="flex gap-4 w-full h-full relative z-10">
                         {reels.map((reel, ri) => (
                             <div
@@ -147,7 +100,6 @@ const SlotsGame: React.FC = () => {
                                     ))}
                                 </motion.div>
 
-                                {/* Winning line highlight */}
                                 {winningLine !== null && (
                                     <div className="absolute inset-0 bg-yellow-400/10 pointer-events-none border-y-4 border-yellow-400/50 z-30" style={{ top: `${winningLine * 33.33}%`, height: '33.33%' }} />
                                 )}
@@ -155,7 +107,6 @@ const SlotsGame: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Center Info Overlay */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 text-center">
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -175,7 +126,6 @@ const SlotsGame: React.FC = () => {
                 </div>
             </div>
 
-            {/* Controls Bar */}
             <div className="bg-[#1e293b] border border-white/5 rounded-3xl p-6 flex items-center justify-between shadow-2xl">
                 <div className="flex items-center gap-8">
                     <div className="flex flex-col gap-2">
@@ -207,7 +157,7 @@ const SlotsGame: React.FC = () => {
 
                 <div className="flex items-center gap-6">
                     <button
-                        onClick={spin}
+                        onClick={handleSpin}
                         disabled={isSpinning || balance < bet}
                         className={cn(
                             "group h-16 w-48 rounded-2xl font-black text-sm uppercase tracking-widest transition-all relative overflow-hidden",

@@ -1,17 +1,17 @@
 import React from 'react';
-import { BetType, RED_NUMBERS } from '../../types/roulette';
+import { Bet, BetType, RED_NUMBERS } from '../../types/roulette';
 import { motion } from 'framer-motion';
 import { Chip } from '../atoms/Chip';
 import { cn } from '../../lib/utils';
 
 interface BettingTableProps {
     onPlaceBet: (type: BetType, value: number | string) => void;
-    activeBets: { type: BetType; value: number | string; amount: number }[];
+    activeBets: readonly Bet[];
 }
 
 export const BettingTable: React.FC<BettingTableProps> = ({ onPlaceBet, activeBets }) => {
     const getBetAmount = (type: BetType, value: number | string) =>
-        activeBets.filter(b => b.type === type && b.value === value).reduce((sum, b) => sum + b.amount, 0);
+        activeBets.filter(b => b.type === type && (b as any).value === value).reduce((sum, b) => sum + b.amount, 0);
 
     const NumberCell = ({ num }: { num: number }) => {
         const isRed = RED_NUMBERS.includes(num);
@@ -46,12 +46,10 @@ export const BettingTable: React.FC<BettingTableProps> = ({ onPlaceBet, activeBe
     return (
         <div className="w-full mx-auto select-none">
             <div className="flex bg-[#065f46] rounded-xl overflow-hidden border-4 border-[#3d2b1f] shadow-2xl">
-                {/* Zero */}
                 <div className="w-20">
                     <NumberCell num={0} />
                 </div>
 
-                {/* Grid */}
                 <div className="flex-1 grid grid-cols-12">
                     {gridNumbers.map((col, i) => (
                         <div key={i} className="flex flex-col">
@@ -60,7 +58,6 @@ export const BettingTable: React.FC<BettingTableProps> = ({ onPlaceBet, activeBe
                     ))}
                 </div>
 
-                {/* Column bets */}
                 <div className="w-16 grid grid-rows-3 bg-green-800 border-l border-white/20">
                     <ColumnBet label="2:1" onClick={() => onPlaceBet('col3', 'col3')} amount={getBetAmount('col3', 'col3')} />
                     <ColumnBet label="2:1" onClick={() => onPlaceBet('col2', 'col2')} amount={getBetAmount('col2', 'col2')} />
@@ -68,7 +65,6 @@ export const BettingTable: React.FC<BettingTableProps> = ({ onPlaceBet, activeBe
                 </div>
             </div>
 
-            {/* Outside bets */}
             <div className="mt-6 grid grid-cols-3 gap-3">
                 {[
                     { label: '1st 12', type: '1st12' as BetType, value: '1-12' },

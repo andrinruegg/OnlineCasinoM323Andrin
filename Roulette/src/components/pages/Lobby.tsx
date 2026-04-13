@@ -33,7 +33,6 @@ const Lobby: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-10 pb-20">
-            {/* Games Grid */}
             <section>
                 <h2 className="text-sm font-semibold text-white/30">Games</h2>
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -46,13 +45,11 @@ const Lobby: React.FC = () => {
                             onClick={() => navigate(game.path)}
                             className="dashboard-card relative group cursor-pointer overflow-hidden min-h-[320px] flex flex-col justify-end p-8"
                         >
-                            {/* Background Asset */}
                             <div className={`absolute inset-0 transition-transform duration-700 group-hover:scale-110 opacity-40 group-hover:opacity-60`}>
                                 <img src={game.image} alt={game.title} className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e11] via-[#0b0e11]/60 to-transparent" />
                             </div>
 
-                            {/* Content */}
                             <div className="relative z-10">
                                 <h3 className="text-2xl font-semibold mb-1.5 group-hover:text-accent transition-colors">{game.title}</h3>
                                 <p className="text-sm text-white/35 leading-relaxed max-w-[200px]">

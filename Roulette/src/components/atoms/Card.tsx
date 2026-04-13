@@ -29,7 +29,6 @@ export const CardView: React.FC<CardViewProps> = ({ card, index }) => {
                 : 'bg-white border-white/40'
                 }`}
         >
-            {/* Holographic Edge */}
             {!card.isHidden && <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none" />}
             {card.isHidden ? (
                 <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg">

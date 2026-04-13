@@ -66,12 +66,10 @@ export const useRoulette = (
 
         setState(prev => update(prev, { isSpinning: true }));
 
-        // Simulate spin boundaries - side effects isolated from state manipulation
         return Math.floor(Math.random() * 37); // 0-36
     }, [state.isSpinning, state.activeBets]);
 
     const resolveSpin = useCallback((result: number) => {
-        // Leverages pure functional calculations from our new rouletteUtils, entirely decoupled
         const winAmount = calculateTotalPayout(result, state.activeBets);
 
         setState(prev => update(prev, {
@@ -79,7 +77,6 @@ export const useRoulette = (
             lastResult: result,
             lastBets: prev.activeBets,
             activeBets: [],
-            // Immutably prepend history using destructuring array syntax
             winningHistory: [result, ...prev.winningHistory].slice(0, 50),
         }));
 
@@ -87,7 +84,6 @@ export const useRoulette = (
         return winAmount;
     }, [state.activeBets, deposit]);
 
-    // Leverage pure domain data-pipeline to derive stats without side-effects or state coupling
     const getStats = useCallback(() => deriveStats(state.winningHistory), [state.winningHistory]);
 
     return {

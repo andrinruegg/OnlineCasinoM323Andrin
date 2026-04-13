@@ -35,7 +35,6 @@ export const GameControls: React.FC<GameControlsProps> = ({
         <div
             className="w-full rounded-2xl p-6 flex flex-col gap-6 bg-[#1e293b] border border-white/5 shadow-2xl"
         >
-            {/* Chip Selector */}
             <div>
                 <div className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-4">Select Chip Value</div>
                 <div className="flex gap-3 flex-wrap">
@@ -72,12 +71,9 @@ export const GameControls: React.FC<GameControlsProps> = ({
                 </div>
             </div>
 
-            {/* Divider */}
             <div className="casino-divider" />
 
-            {/* Action Row */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                {/* Secondary actions */}
                 <div className="flex items-center gap-3">
                     {[
                         { action: onUndo, disabled: !canUndo, icon: <ArrowUUpLeft size={16} weight="bold" />, title: 'Undo' },
@@ -97,7 +93,6 @@ export const GameControls: React.FC<GameControlsProps> = ({
                     ))}
                 </div>
 
-                {/* SPIN button */}
                 <button
                     onClick={onSpin}
                     disabled={!canSpin}

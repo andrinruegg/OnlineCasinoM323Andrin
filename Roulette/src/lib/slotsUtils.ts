@@ -8,8 +8,7 @@ export interface SlotResult {
 }
 
 /**
- * Pure function to evaluate a slot machine spin result
- * Satisfies "Pure Functions & No Side Effects"
+ * Evaluates a slot machine spin result.
  */
 export const evaluateSpin = (results: readonly SlotSymbol[][], bet: number): SlotResult => {
     const lineWin = Array.from({ length: 3 }).reduce(

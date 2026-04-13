@@ -60,12 +60,10 @@ const RouletteGame: React.FC = () => {
 
     return (
         <div className="min-h-screen text-white overflow-x-hidden">
-            {/* Background */}
             <div className="fixed inset-0 pointer-events-none z-0" style={{
                 backgroundImage: `radial-gradient(ellipse 70% 50% at 30% 20%, rgba(6, 95, 70, 0.2) 0%, transparent 60%), linear-gradient(180deg, #064e3b 0%, #065f46 100%)`,
             }} />
 
-            {/* Game Info Bar */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                     <button 
@@ -80,7 +78,6 @@ const RouletteGame: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-6">
-                    {/* History */}
                     <div className="hidden sm:flex items-center gap-1.5">
                         {state.winningHistory.length === 0
                             ? <span className="text-[10px] text-white/20 italic">No results yet</span>
@@ -109,9 +106,7 @@ const RouletteGame: React.FC = () => {
                 </div>
             </div>
 
-            {/* ===== MAIN ===== */}
             <main className="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-16 items-start px-4 md:px-8 py-10 relative z-10">
-                {/* LEFT: Wheel */}
                 <div className="relative flex flex-col items-center justify-center xl:sticky xl:top-24">
                     <AnimatePresence>
                         {winMessage && (
@@ -141,7 +136,6 @@ const RouletteGame: React.FC = () => {
                         onAnimationComplete={onAnimationComplete}
                     />
 
-                    {/* Status bar */}
                     <motion.div
                         animate={state.isSpinning ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
@@ -156,7 +150,6 @@ const RouletteGame: React.FC = () => {
 
                 </div>
 
-                {/* RIGHT: Betting area */}
                 <div className="flex flex-col gap-6 pb-16">
                     <BettingTable onPlaceBet={handlePlaceBet} activeBets={state.activeBets} />
                     <GameControls

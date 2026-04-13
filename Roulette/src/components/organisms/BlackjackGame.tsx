@@ -5,7 +5,8 @@ import { ArrowLeft, ArrowsClockwise, Plus, HandPalm, Info } from '@phosphor-icon
 import confetti from 'canvas-confetti';
 import { useBalance } from '../../context/BalanceContext';
 import { Card, CardView } from '../atoms/Card';
-import { createDeck, calculateHandValue } from '../../lib/blackjackUtils';
+import { useBlackjack } from '../../hooks/useBlackjack';
+import { calculateHandValue } from '../../lib/blackjackUtils';
 import { cn } from '../../lib/utils';
 
 type GameStatus = 'betting' | 'playing' | 'dealer-turn' | 'result';
@@ -20,140 +21,22 @@ const CHIP_OPTIONS = [
 const BlackjackGame: React.FC = () => {
     const navigate = useNavigate();
     const { balance, withdraw, deposit } = useBalance();
-    
-    // Game State
-    const [deck, setDeck] = useState<Card[]>([]);
-    const [playerHand, setPlayerHand] = useState<Card[]>([]);
-    const [dealerHand, setDealerHand] = useState<Card[]>([]);
-    const [status, setStatus] = useState<GameStatus>('betting');
-    const [currentBet, setCurrentBet] = useState(0);
-    const [tempBet, setTempBet] = useState(100);
-    const [message, setMessage] = useState('');
-    const [isWin, setIsWin] = useState<boolean | null>(null);
+    const { state, setTempBet, deal, hit, stand, reset } = useBlackjack(balance, withdraw, deposit);
 
-    const deal = useCallback(() => {
-        if (balance < tempBet) { 
-            setMessage('Insufficient balance!'); 
-            return; 
-        }
+    const { 
+        deck, 
+        playerHand, 
+        dealerHand, 
+        status, 
+        currentBet, 
+        tempBet, 
+        message, 
+        isWin 
+    } = state;
 
-        const newDeck = createDeck();
-        const p1 = newDeck[newDeck.length - 1];
-        const d1 = newDeck[newDeck.length - 2];
-        const p2 = newDeck[newDeck.length - 3];
-        const d2Hidden = { ...newDeck[newDeck.length - 4], isHidden: true };
-        const nextDeck = newDeck.slice(0, -4);
-
-        const pHand = [p1, p2];
-        const dHand = [d1, d2Hidden];
-
-        setDeck(nextDeck);
-        setPlayerHand(pHand);
-        setDealerHand(dHand);
-        setCurrentBet(tempBet);
-        withdraw(tempBet);
-        setIsWin(null);
-        setMessage('');
-
-        if (calculateHandValue(pHand) === 21) {
-            handleRevealDealer(true, pHand, dHand, nextDeck);
-        } else {
-            setStatus('playing');
-        }
-    }, [balance, tempBet, withdraw]);
-
-    const hit = useCallback(() => {
-        const lastIndex = deck.length - 1;
-        const card = deck[lastIndex];
-        const nextDeck = deck.slice(0, lastIndex);
-        const newHand = [...playerHand, card];
-        
-        setDeck(nextDeck);
-        setPlayerHand(newHand);
-
-        if (calculateHandValue(newHand) > 21) {
-            setStatus('result');
-            setMessage('Bust! Dealer Wins');
-            setIsWin(false);
-        }
-    }, [deck, playerHand]);
-
-    const handleRevealDealer = useCallback((playerHasBlackjack = false, pHand?: Card[], dHand?: Card[], currentDeck?: Card[]) => {
-        setStatus('dealer-turn');
-        const activePlayerHand = pHand || playerHand;
-        const activeDealerHand = dHand || dealerHand;
-        const activeDeck = currentDeck || deck;
-
-        const revealed: Card[] = activeDealerHand.map(c => ({ ...c, isHidden: false }));
-        setDealerHand(revealed);
-
-        const dealerPlayNext = (currentHand: Card[], currentCardsDeck: Card[]) => {
-            if (calculateHandValue(currentHand) < 17) {
-                const nextCard = currentCardsDeck[currentCardsDeck.length - 1];
-                const newDeck = currentCardsDeck.slice(0, -1);
-                const newHand = [...currentHand, nextCard];
-                setDealerHand(newHand);
-                setDeck(newDeck);
-                setTimeout(() => dealerPlayNext(newHand, newDeck), 800);
-            } else {
-                finalizeResult(currentHand, playerHasBlackjack, activePlayerHand);
-            }
-        };
-
-        setTimeout(() => dealerPlayNext(revealed, activeDeck), 800);
-    }, [deck, dealerHand, playerHand]);
-
-    const finalizeResult = (finalDealerHand: Card[], playerHasBlackjack: boolean, activePlayerHand: Card[]) => {
-        const pVal = calculateHandValue(activePlayerHand);
-        const dVal = calculateHandValue(finalDealerHand);
-        
-        setStatus('result');
-
-        if (playerHasBlackjack) {
-            if (dVal === 21) {
-                deposit(currentBet);
-                setMessage('Push · Both Blackjack');
-                setIsWin(null);
-            } else {
-                deposit(currentBet * 2.5);
-                setMessage('Blackjack! ✦ 3:2 Payout');
-                setIsWin(true);
-                confetti({ particleCount: 180, spread: 70, origin: { y: 0.6 } });
-            }
-            return;
-        }
-
-        if (dVal > 21) {
-            deposit(currentBet * 2);
-            setMessage('Dealer Bust · You Win!');
-            setIsWin(true);
-            confetti({ particleCount: 120 });
-        } else if (pVal > dVal) {
-            deposit(currentBet * 2);
-            setMessage('You Win!');
-            setIsWin(true);
-            confetti({ particleCount: 100 });
-        } else if (pVal < dVal) {
-            setMessage('Dealer Wins');
-            setIsWin(false);
-        } else {
-            deposit(currentBet);
-            setMessage('Push · Bet Returned');
-            setIsWin(null);
-        }
-    };
-
-    const reset = () => {
-        setPlayerHand([]);
-        setDealerHand([]);
-        setStatus('betting');
-        setMessage('');
-        setIsWin(null);
-    };
 
     return (
         <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto py-4">
-            {/* Header info */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <button 
@@ -170,12 +53,10 @@ const BlackjackGame: React.FC = () => {
                 </div>
             </div>
 
-            {/* Table Area */}
             <div className="relative w-full aspect-[16/9] bg-[#065f46] rounded-[40px] border-8 border-[#3d2b1f] overflow-hidden shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] flex flex-col justify-between p-12">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[40%] border-2 border-white/10 rounded-full pointer-events-none opacity-20" />
 
-                {/* Dealer Hand */}
                 <div className="flex flex-col items-center gap-4 z-10">
                     <div className="flex gap-4 relative min-h-[150px]">
                         {dealerHand.map((card, i) => <CardView key={`${i}-${card.rank}`} card={card} index={i} />)}
@@ -194,7 +75,6 @@ const BlackjackGame: React.FC = () => {
                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">Dealer</span>
                 </div>
 
-                {/* Center Message */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center z-20">
                     <AnimatePresence mode="wait">
                         {message && (
@@ -214,7 +94,6 @@ const BlackjackGame: React.FC = () => {
                     </AnimatePresence>
                 </div>
 
-                {/* Player Hand */}
                 <div className="flex flex-col items-center gap-4 z-10">
                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">Player</span>
                     <div className="flex gap-4 relative min-h-[150px]">
@@ -232,7 +111,6 @@ const BlackjackGame: React.FC = () => {
                 </div>
             </div>
 
-            {/* Controls Bar */}
             <div className="bg-[#1e293b] border border-white/5 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative z-30">
                 {status === 'betting' ? (
                     <>
@@ -281,7 +159,7 @@ const BlackjackGame: React.FC = () => {
                             <Plus size={18} weight="bold" /> Hit
                         </button>
                         <button
-                            onClick={() => handleRevealDealer()}
+                            onClick={stand}
                             className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 font-black uppercase tracking-widest text-sm hover:bg-white/10 text-white transition-all flex items-center justify-center gap-3"
                         >
                             <HandPalm size={18} weight="fill" /> Stand

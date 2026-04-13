@@ -26,7 +26,6 @@ const Sidebar: React.FC = () => {
 
     return (
         <aside className="w-64 h-full bg-[#0b0e11] border-r border-white/5 flex flex-col z-30">
-            {/* Logo */}
             <div className="p-8 flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-black font-black">
                     CR
@@ -36,7 +35,6 @@ const Sidebar: React.FC = () => {
                 </span>
             </div>
 
-            {/* Main Menu */}
             <nav className="flex-grow px-4 pb-8 overflow-y-auto custom-scrollbar">
                 <div className="text-[11px] font-medium text-white/25 mb-3 pl-1">Games</div>
                 <div className="flex flex-col gap-0.5 mb-8">

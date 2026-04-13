@@ -9,10 +9,8 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     return (
         <div className="flex h-screen w-screen overflow-hidden bg-[#0b0e11] text-white font-sans">
-            {/* Left Sidebar */}
             <Sidebar />
 
-            {/* Main Content Area */}
             <div className="flex flex-col flex-1 h-full overflow-hidden">
                 <Header />
                 <main className="flex-1 overflow-y-auto custom-scrollbar p-8">
@@ -20,7 +18,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </main>
             </div>
             
-            {/* Optional Right Chat Sidebar could go here */}
         </div>
     );
 };

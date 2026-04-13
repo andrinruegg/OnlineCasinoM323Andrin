@@ -63,7 +63,6 @@ const MusicPlayer: React.FC = () => {
                     backdropFilter: 'blur(20px)',
                 }}
             >
-                {/* Visualizer */}
                 <div className="flex items-end gap-[3px] h-5 w-7">
                     {[0.6, 1, 0.75, 0.9].map((h, i) => (
                         <motion.div
